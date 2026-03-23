@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIHUB - 你的AI宇宙中心</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060912;--bg2:#0b1120;--bg3:#101828;--primary:#3b82f6;--pl:#60a5fa;--accent:#06b6d4;--accent2:#8b5cf6;--gold:#f59e0b;--green:#22c55e;--red:#ef4444;--text:#e2e8f0;--text2:#94a3b8;--text3:#475569;--border:rgba(59,130,246,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}a{color:inherit;text-decoration:none}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,9,18,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Noto Serif SC',serif;font-size:22px;font-weight:900;color:#fff;cursor:pointer}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 20px rgba(59,130,246,.3)}
+.nav-links{display:flex;align-items:center;gap:4px;list-style:none}
+.nav-links a{color:var(--text2);font-size:13px;font-weight:500;padding:6px 12px;border-radius:8px;transition:all .2s;white-space:nowrap;cursor:pointer}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(59,130,246,.15)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn-sm{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.btn-p{background:linear-gradient(135deg,var(--primary),#2563eb);color:#fff}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}.hamburger span{width:22px;height:2px;background:var(--text)}
+.page{display:none;padding-top:64px}.page.active{display:block}
+.hero{min-height:calc(100vh - 64px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px 60px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(59,130,246,.25),transparent),radial-gradient(ellipse 60% 40% at 80% 60%,rgba(139,92,246,.15),transparent);pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,black,transparent);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:50px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);font-size:13px;color:var(--pl);margin-bottom:28px;animation:fadeUp .6s ease;position:relative}
+.dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Noto Serif SC',serif;font-size:clamp(48px,8vw,88px);font-weight:900;line-height:1.1;margin-bottom:14px;background:linear-gradient(135deg,#fff 30%,var(--pl) 60%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fadeUp .6s ease .1s both;position:relative}
+.g{background:linear-gradient(135deg,var(--gold),#fbbf24)!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important}
+.hero-sub{font-size:clamp(16px,2.5vw,22px);color:var(--text2);font-weight:300;margin-bottom:40px;line-height:1.7;position:relative;animation:fadeUp .6s ease .2s both}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:60px;position:relative;animation:fadeUp .6s ease .3s both}
+.btn-hero{padding:14px 32px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:8px;transition:all .3s}
+.btn-main{background:linear-gradient(135deg,var(--primary),#2563eb);color:#fff;box-shadow:0 0 40px rgba(59,130,246,.4)}
+.btn-main:hover{box-shadow:0 0 60px rgba(59,130,246,.6);transform:translateY(-2px)}
+.btn-ghost{background:rgba(255,255,255,.05);color:var(--text);border:1px solid rgba(255,255,255,.1)}
+.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;position:relative;animation:fadeUp .6s ease .4s both}
+.hero-stat .n{font-family:'Noto Serif SC',serif;font-size:32px;font-weight:900;color:#fff;line-height:1}
+.hero-stat .n span{color:var(--accent)}
+.hero-stat .l{font-size:13px;color:var(--text3);margin-top:4px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.sec{padding:100px 40px;max-width:1280px;margin:0 auto}
+.sec-label{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;letter-spacing:2px;color:var(--accent);margin-bottom:12px}
+.sec-label::before{content:'';width:20px;height:2px;background:var(--accent);border-radius:1px}
+.sec h2{font-family:'Noto Serif SC',serif;font-size:clamp(28px,5vw,44px);font-weight:900;color:#fff;margin-bottom:10px}
+.sec-desc{font-size:16px;color:var(--text2);max-width:580px;line-height:1.7;margin-bottom:50px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.fcard{background:rgba(16,24,40,.6);border:1px solid var(--border);border-radius:16px;padding:26px;transition:all .3s;cursor:pointer}
+.fcard:hover{border-color:rgba(59,130,246,.4);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.fi{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+.fcard h3{font-size:17px;font-weight:700;color:#fff;margin-bottom:8px}
+.fcard p{font-size:13px;color:var(--text2);line-height:1.65}
+.ftag{display:inline-block;margin-top:10px;font-size:11px;padding:3px 10px;border-radius:50px;background:rgba(59,130,246,.1);color:var(--pl);font-weight:500}
+.tabs{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap}
+.tab{padding:7px 18px;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .2s;font-family:inherit}
+.tab.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.link-group{margin-bottom:28px}.link-group-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:12px}
+.link-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.lcard{display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(16,24,40,.5);border:1px solid var(--border);border-radius:12px;transition:all .2s;cursor:pointer}
+.lcard:hover{border-color:var(--primary);background:rgba(59,130,246,.08);transform:translateX(4px)}
+.li{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;background:rgba(59,130,246,.1)}
+.ln{font-size:14px;font-weight:600}.ld{font-size:11px;color:var(--text3);margin-top:2px}
+.news-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.nmain{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(139,92,246,.1));border:1px solid var(--border);border-radius:16px;padding:28px;cursor:pointer;transition:all .3s}
+.nmain:hover{border-color:var(--primary);transform:translateY(-2px)}
+.ntag{display:inline-block;padding:3px 12px;border-radius:50px;font-size:11px;font-weight:700;background:var(--primary);color:#fff;margin-bottom:14px}
+.nmain h3{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:10px}
+.nmeta{font-size:12px;color:var(--text3)}
+.nside{display:flex;flex-direction:column;gap:10px}
+.nitem{padding:16px;background:rgba(16,24,40,.5);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s}
+.nitem:hover{border-color:rgba(59,130,246,.4)}
+.nitem h4{font-size:14px;font-weight:600;color:#fff;margin-bottom:6px;line-height:1.5}
+.nstag{display:inline-block;padding:2px 8px;border-radius:50px;font-size:10px;font-weight:600;background:rgba(139,92,246,.15);color:var(--accent2);margin-bottom:5px}
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.ccard{background:rgba(16,24,40,.6);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .3s}
+.ccard:hover{border-color:var(--accent2);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.cthumb{height:150px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative}
+.cd{position:absolute;top:10px;right:10px;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:600;background:rgba(0,0,0,.4);backdrop-filter:blur(10px);color:#fff}
+.cbody{padding:18px}.cbody h3{font-size:16px;font-weight:700;color:#fff;margin-bottom:7px}.cbody p{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.cmeta{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text3)}
+.card{background:rgba(16,24,40,.6);border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .3s;cursor:pointer}
+.card:hover{transform:translateY(-4px)}
+.job-list{display:grid;gap:12px;margin-bottom:28px}
+.job-item{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;background:rgba(16,24,40,.6);border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:all .2s}
+.job-item:hover{border-color:var(--primary)}
+.job-left{display:flex;align-items:center;gap:14px}
+.job-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.job-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:3px}
+.job-info{font-size:12px;color:var(--text2)}
+.job-tag{font-size:11px;padding:3px 10px;border-radius:50px;font-weight:600}
+.stat-row{display:flex;gap:16px;flex-wrap:wrap}
+.stat-box{flex:1;min-width:140px;background:rgba(16,24,40,.4);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.stat-num{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:900;color:#fff}
+.stat-lbl{font-size:12px;color:var(--text3);margin-top:4px}
+.app-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.app-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.ctabox{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(139,92,246,.12));border:1px solid rgba(59,130,246,.3);border-radius:24px;padding:60px;text-align:center;position:relative;overflow:hidden;margin:0 40px 100px}
+.ctabox h2{font-family:'Noto Serif SC',serif;font-size:34px;font-weight:900;color:#fff;margin-bottom:12px;position:relative}
+.ctabox>p{font-size:16px;color:var(--text2);margin-bottom:28px;position:relative}
+.bcta{padding:13px 34px;background:linear-gradient(135deg,var(--primary),#2563eb);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 0 30px rgba(59,130,246,.4);transition:all .3s;position:relative}
+.bcta:hover{transform:translateY(-2px)}
+footer{border-top:1px solid var(--border);padding:36px 40px}
+footer p{font-size:13px;color:var(--text3);text-align:center}
+.flinks{display:flex;justify-content:center;gap:18px;margin-bottom:14px;flex-wrap:wrap}
+.flinks a{color:var(--text3);font-size:13px;transition:color .2s}.flinks a:hover{color:var(--text2)}
+.twarp{position:fixed;bottom:0;left:0;right:0;background:rgba(6,9,18,.92);backdrop-filter:blur(10px);border-top:1px solid var(--border);z-index:999;height:36px;overflow:hidden;display:flex;align-items:center}
+.tlabel{background:var(--primary);color:#fff;font-size:11px;font-weight:700;padding:0 12px;height:100%;display:flex;align-items:center;flex-shrink:0}
+.tt{display:flex;align-items:center;gap:40px;animation:tscroll 30s linear infinite;white-space:nowrap;padding-left:20px}
+.titem{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px}
+.titem .td{width:4px;height:4px;background:var(--primary);border-radius:50%}
+@keyframes tscroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:2000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:36px;width:90%;max-width:400px;position:relative}
+.modal h3{font-size:20px;font-weight:700;color:#fff;margin-bottom:20px;text-align:center}
+.modal input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:14px;margin-bottom:12px;font-family:inherit;outline:none}
+.modal input:focus{border-color:var(--primary)}
+.modal-btn{width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--primary),#2563eb);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer}
+.tag-sm{font-size:11px;padding:2px 10px;border-radius:50px;font-weight:500}
+@media(max-width:768px){nav{padding:0 16px}.nav-links{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(6,9,18,.95);backdrop-filter:blur(20px);flex-direction:column;padding:16px;border-bottom:1px solid var(--border)}.nav-links.open{display:flex}.hamburger{display:flex}.sec{padding:60px 16px}.news-grid{grid-template-columns:1fr}.features-grid{grid-template-columns:1fr 1fr}.course-grid{grid-template-columns:1fr}.link-cards{grid-template-columns:1fr 1fr}.ctabox{padding:40px 20px;margin:0 16px 100px}.job-right{display:none}}
+@media(max-width:480px){.features-grid,.course-grid,.link-cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo" onclick="go('home')"><div class="logo-icon">🧠</div>AIHUB</div>
+  <ul class="nav-links" id="navMenu">
+    <li><a onclick="go('home')" class="active" data-p="home">首页</a></li>
+    <li><a onclick="go('links')" data-p="links">AI导航</a></li>
+    <li><a onclick="go('tools')" data-p="tools">AI工具</a></li>
+    <li><a onclick="go('community')" data-p="community">AI社区</a></li>
+    <li><a onclick="go('jobs')" data-p="jobs">AI求职</a></li>
+    <li><a onclick="go('sideincome')" data-p="sideincome">AI副业</a></li>
+    <li><a onclick="go('apps')" data-p="apps">AI应用</a></li>
+    <li><a onclick="go('news')" data-p="news">AI新闻</a></li>
+    <li><a onclick="go('courses')" data-p="courses">学习中心</a></li>
+  </ul>
+  <div class="nav-right">
+    <span id="userDisp" style="font-size:13px;color:var(--text2)"></span>
+    <button class="btn-sm btn-p" id="loginBtn" onclick="toggleLogin()">登录</button>
+    <div class="hamburger" onclick="document.getElementById('navMenu').classList.toggle('open')"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="toggleLogin()">✕</button>
+    <h3>📱 手机号登录</h3>
+    <input id="phoneIn" type="tel" placeholder="请输入手机号" maxlength="11">
+    <div style="display:flex;gap:10px">
+      <input id="codeIn" type="text" placeholder="验证码" maxlength="6" style="flex:1">
+      <button class="modal-btn" onclick="sendSms()" style="width:auto;padding:12px 16px;margin:0;font-size:13px">发送验证码</button>
+    </div>
+    <button class="modal-btn" onclick="doLogin()">登 录</button>
+    <p style="text-align:center;font-size:12px;color:var(--text3);margin-top:12px">模拟验证码：888888</p>
+  </div>
+</div>
+
+<div class="page active" id="pg-home">
+  <div class="hero">
+    <div class="hero-bg"></div><div class="hero-grid"></div>
+    <div class="hero-badge"><div class="dot"></div>面向 AI 小白的全能导航平台</div>
+    <h1>探索<span class="g">AI</span>宇宙<br>从这里开始</h1>
+    <p class="hero-sub">编程学习 · 考研指南 · 求职招聘 · AI新闻 · 前沿研究<br>一站式满足你对AI的所有好奇心</p>
+    <div class="hero-actions">
+      <button class="btn-hero btn-main" onclick="go('features')">🚀 开始探索</button>
+      <button class="btn-hero btn-ghost" onclick="go('courses')">📖 免费课程 →</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n" id="s1">500<span>+</span></div><div class="l">收录工具</div></div>
+      <div class="hero-stat"><div class="n" id="s2">50<span>+</span></div><div class="l">精品课程</div></div>
+      <div class="hero-stat"><div class="n" id="s3">10<span>万</span></div><div class="l">用户信赖</div></div>
+      <div class="hero-stat"><div class="n">24<span>/7</span></div><div class="l">实时资讯</div></div>
+    </div>
+  </div>
+  <section class="sec" id="features-sec">
+    <div class="sec-label">✨ 核心功能</div>
+    <h2>你的AI全能助手</h2>
+    <p class="sec-desc">无论你想学AI编程、备战考研，还是找工作、追踪AI动态，AIHUB一站式搞定。</p>
+    <div class="features-grid">
+      <div class="fcard" onclick="go('courses')"><div class="fi" style="background:rgba(59,130,246,.15)">💻</div><h3>AI编程学习</h3><p>从Python到深度学习，小白也能轻松上手</p><span class="ftag">🔥 最受欢迎</span></div>
+      <div class="fcard" onclick="go('courses')"><div class="fi" style="background:rgba(139,92,246,.15)">📚</div><h3>AI考研指南</h3><p>汇集全国AI相关专业院校信息</p></div>
+      <div class="fcard" onclick="go('jobs')"><div class="fi" style="background:rgba(6,182,212,.15)">💼</div><h3>AI求职招聘</h3><p>汇聚头部AI公司实习与全职岗位</p></div>
+      <div class="fcard" onclick="go('news')"><div class="fi" style="background:rgba(245,158,11,.15)">📰</div><h3>AI新闻资讯</h3><p>实时追踪国内外AI前沿动态</p></div>
+      <div class="fcard"><div class="fi" style="background:rgba(16,185,129,.15)">🔬</div><h3>AI研究报告</h3><p>最新AI论文与研究报告解读</p></div>
+      <div class="fcard" onclick="go('links')"><div class="fi" style="background:rgba(239,68,68,.15)">🗺️</div><h3>AI工具导航</h3><p>收录500+AI工具，按用途分类</p></div>
+      <div class="fcard"><div class="fi" style="background:rgba(236,72,153,.15)">🤖</div><h3>AI模型对比</h3><p>主流大模型能力横评对比</p></div>
+      <div class="fcard" onclick="go('community')"><div class="fi" style="background:rgba(14,165,233,.15)">🎓</div><h3>AI学习社区</h3><p>与AI爱好者一起交流成长</p></div>
+    </div>
+  </section>
+</div>
+
+<div class="page" id="pg-links"><section class="sec"><div class="sec-label">🗺️ AI导航</div><h2>全网AI工具导航大全</h2><p class="sec-desc">精选100+优质AI工具，一键直达。</p><div class="tabs" id="linkTabs"></div><div id="linkContent"></div></section></div>
+<div class="page" id="pg-tools"><section class="sec"><div class="sec-label">🛠️ AI工具</div><h2>发现最强大的AI工具</h2><p class="sec-desc">500+精选AI工具，覆盖所有场景。</p><div id="toolGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px"></div></section></div>
+<div class="page" id="pg-community"><section class="sec"><div class="sec-label">👥 AI社区</div><h2>与AI爱好者一起成长</h2><p class="sec-desc">加入万人AI学习社区，交流心得、分享项目。</p><div id="communityGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:32px"></div><div class="stat-row"><div class="stat-box"><div class="stat-num">10<span style="color:var(--green)">万</span>+</div><div class="stat-lbl">社区成员</div></div><div class="stat-box"><div class="stat-num">1<span style="color:var(--green)">万</span>+</div><div class="stat-lbl">每日讨论帖</div></div><div class="stat-box"><div class="stat-num">500<span style="color:var(--green)">+</span></div><div class="stat-lbl">活跃项目组</div></div><div class="stat-box"><div class="stat-num">50<span style="color:var(--green)">+</span></div><div class="stat-lbl">每月比赛</div></div></div></section></div>
+<div class="page" id="pg-jobs"><section class="sec"><div class="sec-label">💼 AI求职</div><h2>AI领域好工作，一键直达</h2><p class="sec-desc">汇聚头部AI公司岗位。</p><div class="job-list" id="jobList"></div></section></div>
+<div class="page" id="pg-sideincome"><section class="sec"><div class="sec-label">💰 AI副业变现</div><h2>用AI开启你的第二收入</h2><p class="sec-desc">实战案例+变现路径。</p><div id="siGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px"></div></section></div>
+<div class="page" id="pg-apps"><section class="sec"><div class="sec-label">🏭 AI应用</div><h2>AI正在改变每个行业</h2><p class="sec-desc">AI技术在各行各业落地生根。</p><div class="tabs" id="appTabs"></div><div id="appGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px"></div></section></div>
+<div class="page" id="pg-news"><section class="sec"><div class="sec-label">📰 AI资讯</div><h2>前沿动态，一网打尽</h2><p class="sec-desc">每天5分钟，紧跟AI世界。</p><div class="news-grid" id="newsGrid"></div></section></div>
+<div class="page" id="pg-courses"><section class="sec"><div class="sec-label">🎓 学习中心</div><h2>从零到AI专家</h2><p class="sec-desc">精选实战课程，循序渐进。</p><div class="tabs" id="courseTabs"></div><div class="course-grid" id="courseGrid"></div></section></div>
+
+<div id="ctaSection" style="display:none"><div class="ctabox"><h2>准备好加入AI浪潮了吗？</h2><p>无论你是学生、职场人还是创业者，这里有你需要的一切AI资源</p><button class="bcta" onclick="go('home')">🚀 开始探索</button></div></div>
+
+<footer><div class="flinks"><a href="#">关于我们</a><a href="#">用户协议</a><a href="#">隐私政策</a><a href="/admin">管理后台</a><a href="#">联系我们</a></div><p>&copy; 2025 AIHUB. Made with 🧠 by AI lovers.</p></footer>
+
+<div class="twarp"><div class="tlabel">AI快讯</div><div class="tt" id="tickerContent"></div></div>
+
+<script>
+let allTools=[],allNews=[],allCourses=[],allPosts=[],allJobs=[],allSI=[],allApps=[];
+const catMap={chat:'🤖 AI对话',image:'🎨 AI绘画',video:'🎬 AI视频',audio:'🎙️ AI音频',code:'💻 AI编程',office:'✍️ AI办公',search:'🔍 AI搜索',human:'🧑‍💻 AI数字人'};
+const thumbBgs=['linear-gradient(135deg,#1a365d,#2d4a7c)','linear-gradient(135deg,#2d1b69,#4c1d95)','linear-gradient(135deg,#0c4a6e,#0369a1)','linear-gradient(135deg,#14532d,#166534)','linear-gradient(135deg,#7c2d12,#92400e)','linear-gradient(135deg,#581c87,#7e22ce)'];
+const diffColors={入门:'color:#4ade80',进阶:'color:#fbbf24',高级:'color:#f87171'};
+
+function go(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('pg-'+p);
+  if(el)el.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active',a.dataset.p===p));
+  document.getElementById('ctaSection').style.display=['home','features'].includes(p)?'none':'block';
+  if(p==='home'||p==='features'){document.getElementById('features-sec').style.display='block';document.getElementById('pg-home').classList.add('active')}
+  else document.getElementById('features-sec').style.display='none';
+  document.getElementById('navMenu').classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleLogin(){document.getElementById('loginModal').classList.toggle('show')}
+
+async function sendSms(){
+  const phone=document.getElementById('phoneIn').value;
+  if(!/^1\d{10}$/.test(phone))return alert('请输入正确的手机号');
+  const r=await fetch('/api/user/send-code',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone})});
+  const d=await r.json();alert(d.success?'验证码已发送（模拟：888888）':d.error);
+}
+
+async function doLogin(){
+  const phone=document.getElementById('phoneIn').value,code=document.getElementById('codeIn').value;
+  const r=await fetch('/api/user/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,code})});
+  const d=await r.json();if(d.success){toggleLogin();checkUser()}else alert(d.error);
+}
+
+async function checkUser(){
+  const r=await fetch('/api/user/me'),d=await r.json();
+  if(d.user){document.getElementById('loginBtn').textContent='退出';document.getElementById('loginBtn').onclick=async()=>{await fetch('/api/user/logout',{method:'POST'});checkUser()};document.getElementById('userDisp').textContent=d.user.nickname||d.user.phone}
+  else{document.getElementById('loginBtn').textContent='登录';document.getElementById('loginBtn').onclick=toggleLogin;document.getElementById('userDisp').textContent=''}
+}
+
+async function loadAll(){
+  try{
+    const[tools,news,courses,posts,jobs,si,apps]=await Promise.all([fetch('/api/tools').then(r=>r.json()),fetch('/api/news').then(r=>r.json()),fetch('/api/courses').then(r=>r.json()),fetch('/api/posts').then(r=>r.json()),fetch('/api/jobs').then(r=>r.json()),fetch('/api/side-incomes').then(r=>r.json()),fetch('/api/apps').then(r=>r.json())]);
+    allTools=tools;allNews=news;allCourses=courses;allPosts=posts;allJobs=jobs;allSI=si;allApps=apps;
+    renderLinks('all');renderTools();renderCourses();renderNews();renderCommunity();renderJobs();renderSI();renderApps();renderAppTabs();
+    // ticker
+    const tickers=allNews.slice(0,6).map(n=>'<div class="titem"><div class="td"></div>'+n.title+'</div>').join('');
+    document.getElementById('tickerContent').innerHTML=tickers+tickers;
+  }catch(e){console.error(e)}
+}
+
+function renderLinks(cat){
+  const tabs=document.getElementById('linkTabs');
+  tabs.innerHTML='<button class="tab on" onclick="renderLinks(\'all\')">全部</button>'+Object.entries(catMap).map(([k,v])=>'<button class="tab" onclick="renderLinks(\''+k+'\')">'+v+'</button>').join('');
+  tabs.querySelectorAll('.tab').forEach(t=>{t.classList.toggle('on',t.textContent.includes(cat==='all'?'全部':catMap[cat]?.slice(2)))});
+  const filtered=cat==='all'?allTools:allTools.filter(t=>t.category===cat);
+  const groups={};
+  filtered.forEach(t=>{if(!groups[t.category])groups[t.category]=[];groups[t.category].push(t)});
+  const html=Object.entries(groups).map(([cat,items])=>'<div class="link-group"><div class="link-group-title">'+(catMap[cat]||cat)+'</div><div class="link-cards">'+items.map(t=>'<a href="'+(t.url||'#')+'" target="_blank" class="lcard"><div class="li">'+(t.icon||'🤖')+'</div><div><div class="ln">'+t.name+'</div><div class="ld">'+t.description+'</div></div></a>').join('')+'</div></div>').join('');
+  document.getElementById('linkContent').innerHTML=html||'<p style="color:var(--text3)">暂无数据</p>';
+}
+
+function renderTools(){
+  document.getElementById('toolGrid').innerHTML=allTools.slice(0,24).map(t=>'<div style="text-align:center;padding:16px 10px;background:rgba(16,24,40,.6);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor=\'var(--primary)\'" onmouseout="this.style.borderColor=\'var(--border)\'"><div style="font-size:28px;margin-bottom:8px">'+(t.icon||'🤖')+'</div><div style="font-size:13px;font-weight:600;color:#fff">'+t.name+'</div><div style="font-size:11px;color:var(--text3);margin-top:3px">'+(t.category||'')+'</div></div>').join('');
+}
+
+function renderCourses(cat){
+  cat=cat||'全部';
+  const cats=['全部',...new Set(allCourses.map(c=>c.category))];
+  document.getElementById('courseTabs').innerHTML=cats.map(c=>'<button class="tab'+(c===cat?' on':'')+'" onclick="renderCourses(\''+c+'\')">'+c+'</button>').join('');
+  const filtered=cat==='全部'?allCourses:allCourses.filter(c=>c.category===cat);
+  document.getElementById('courseGrid').innerHTML=filtered.map((c,i)=>'<div class="ccard"><div class="cthumb" style="background:'+thumbBgs[i%thumbBgs.length]+'">'+(c.icon||'📚')+'<span class="cd" style="'+(diffColors[c.difficulty]||'')+'">'+c.difficulty+'</span></div><div class="cbody"><h3>'+c.title+'</h3><p>'+c.description+'</p><div class="cmeta"><span>👥 '+(c.students||'0')+'学习</span><span>⭐ '+(c.rating||'4.8')+'分</span></div></div></div>').join('');
+}
+
+function renderNews(){
+  if(!allNews.length){document.getElementById('newsGrid').innerHTML='<p style="color:var(--text3)">暂无新闻</p>';return}
+  const main=allNews.find(n=>n.is_featured)||allNews[0];
+  const side=allNews.filter(n=>n.id!==main.id).slice(0,4);
+  document.getElementById('newsGrid').innerHTML='<div class="nmain"><div class="ntag">🔥 头条</div><h3>'+main.title+'</h3><div class="nmeta">AIHUB · '+main.category+'</div></div><div class="nside">'+side.map(n=>'<div class="nitem"><div class="nstag">'+n.category+'</div><h4>'+n.title+'</h4><div class="nmeta">AIHUB · '+n.category+'</div></div>').join('')+'</div>';
+}
+
+function renderCommunity(){
+  const colors=['linear-gradient(135deg,#3b82f6,#06b6d4)','linear-gradient(135deg,#8b5cf6,#ec4899)','linear-gradient(135deg,#f59e0b,#ef4444)'];
+  document.getElementById('communityGrid').innerHTML=allPosts.map((p,i)=>'<div class="card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div class="community-avatar" style="background:'+colors[i%3]+';width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px">'+(p.author_avatar||'🤖')+'</div><div><div style="font-size:15px;font-weight:700;color:#fff">'+p.title+'</div><div style="font-size:12px;color:var(--text3)">'+(p.members||'0')+'人</div></div></div><p style="font-size:13px;color:var(--text2);line-height:1.6">'+p.content+'</p></div>').join('');
+}
+
+function renderJobs(){
+  const tagColors={red:'background:rgba(239,68,68,.1);color:#f87171',gold:'background:rgba(245,158,11,.1);color:var(--gold)',green:'background:rgba(16,185,129,.1);color:#4ade80'};
+  document.getElementById('jobList').innerHTML=allJobs.map(j=>'<div class="job-item"><div class="job-left"><div class="job-icon" style="background:rgba(59,130,246,.1)">'+(j.icon||'🏢')+'</div><div><div class="job-title">'+j.title+'</div><div class="job-info">'+j.company+' · '+j.location+' · '+j.salary+'</div></div></div><div class="job-right"><span class="job-tag" style="'+(tagColors[j.tag_color]||tagColors.green)+'">'+(j.tag||'新发布')+'</span></div></div>').join('');
+}
+
+function renderSI(){
+  document.getElementById('siGrid').innerHTML=allSI.map(s=>'<div class="card" style="border-color:rgba(245,158,11,.2)"><div style="position:absolute;top:0;right:0;width:60px;height:60px;background:linear-gradient(135deg,rgba(245,158,11,.2),transparent);border-radius:0 16px 0 60px"></div><div style="font-size:28px;margin-bottom:12px">'+(s.icon||'💰')+'</div><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:6px">'+s.title+'</div><div style="font-size:12px;color:var(--gold);font-weight:600;margin-bottom:10px">'+s.income+'</div><p style="font-size:13px;color:var(--text2);line-height:1.6">'+s.description+'</p></div>').join('');
+}
+
+function renderApps(cat){
+  cat=cat||'全部';
+  renderAppTabs(cat);
+  const filtered=cat==='全部'?allApps:allApps.filter(a=>a.category===cat);
+  const catColors={教育:'rgba(59,130,246,.1)',电商:'rgba(236,72,153,.1)',直播:'rgba(239,68,68,.1)',农业:'rgba(16,185,129,.1)',医学:'rgba(239,68,68,.1)',考古:'rgba(245,158,11,.1)',制造:'rgba(59,130,246,.1)',金融:'rgba(139,92,246,.1)'};
+  const catTextColors={教育:'var(--pl)',电商:'#f472b6',直播:'#f87171',农业:'#4ade80',医学:'#f87171',考古:'var(--gold)',制造:'var(--pl)',金融:'var(--accent2)'};
+  document.getElementById('appGrid').innerHTML=filtered.map(a=>'<div class="card"><div class="app-header"><div class="app-icon" style="background:linear-gradient(135deg,'+(catColors[a.category]||'rgba(59,130,246,.1)')+','+(catColors[a.category]||'rgba(59,130,246,.1)')+')">'+(a.icon||'📚')+'</div><span class="tag-sm" style="background:'+(catColors[a.category]||'rgba(59,130,246,.1)')+';color:'+(catTextColors[a.category]||'var(--pl)')+'">'+a.category+'</span></div><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px">'+a.title+'</div><p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+a.description+'</p><div style="display:flex;gap:6px">'+(a.tags||'').split(',').filter(Boolean).map(t=>'<span class="tag-sm" style="background:rgba(59,130,246,.08);color:var(--text3)">'+t+'</span>').join('')+'</div></div>').join('');
+}
+
+function renderAppTabs(cat){
+  cat=cat||'全部';
+  const cats=['全部',...new Set(allApps.map(a=>a.category))];
+  document.getElementById('appTabs').innerHTML=cats.map(c=>'<button class="tab'+(c===cat?' on':'')+'" onclick="renderApps(\''+c+'\')">'+c+'</button>').join('');
+}
+
+loadAll();checkUser();
+</script>
+</body>
+</html>

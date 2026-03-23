@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIHUB 管理后台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060912;--bg2:#0b1120;--bg3:#101828;--primary:#3b82f6;--pl:#60a5fa;--accent:#06b6d4;--accent2:#8b5cf6;--gold:#f59e0b;--green:#22c55e;--red:#ef4444;--text:#e2e8f0;--text2:#94a3b8;--text3:#475569;--border:rgba(59,130,246,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{color:inherit;text-decoration:none}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px}
+
+/* Login */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,rgba(59,130,246,.15),transparent 70%)}
+.login-box{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:48px;width:90%;max-width:400px}
+.login-box h1{text-align:center;font-size:24px;font-weight:700;color:#fff;margin-bottom:8px}
+.login-box p{text-align:center;font-size:14px;color:var(--text3);margin-bottom:32px}
+.login-box input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:14px;margin-bottom:16px;font-family:inherit;outline:none}
+.login-box input:focus{border-color:var(--primary)}
+.login-btn{width:100%;padding:13px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--primary),#2563eb);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+
+/* Layout */
+.admin-wrap{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--bg3);border-right:1px solid var(--border);padding:24px 0;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:10}
+.sidebar-logo{padding:0 24px 24px;font-size:20px;font-weight:900;color:#fff;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 24px;font-size:14px;color:var(--text2);transition:all .2s;cursor:pointer}
+.sidebar a:hover,.sidebar a.active{color:#fff;background:rgba(59,130,246,.1)}
+.sidebar a.active{border-right:3px solid var(--primary)}
+.main{flex:1;margin-left:240px;padding:24px 32px 60px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.topbar h2{font-size:22px;font-weight:700;color:#fff}
+
+/* Cards */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:32px}
+.stat-card{background:rgba(16,24,40,.6);border:1px solid var(--border);border-radius:14px;padding:20px}
+.stat-card .num{font-size:28px;font-weight:900;color:#fff}
+.stat-card .label{font-size:13px;color:var(--text3);margin-top:4px}
+
+/* Table */
+.table-wrap{background:rgba(16,24,40,.4);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px 16px;text-align:left;font-size:13px;border-bottom:1px solid var(--border)}
+th{background:var(--bg3);color:var(--text2);font-weight:600}
+td{color:var(--text)}
+tr:hover td{background:rgba(59,130,246,.03)}
+.btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
+.btn-edit{background:rgba(59,130,246,.15);color:var(--pl)}
+.btn-del{background:rgba(239,68,68,.15);color:#f87171}
+.btn-add{padding:10px 24px;border-radius:10px;background:linear-gradient(135deg,var(--primary),#2563eb);color:#fff;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;margin-bottom:20px}
+.btn-add:hover{box-shadow:0 0 20px rgba(59,130,246,.4)}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:32px;width:90%;max-width:520px;max-height:80vh;overflow-y:auto;position:relative}
+.modal h3{font-size:18px;font-weight:700;color:#fff;margin-bottom:20px}
+.modal label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px;margin-top:12px}
+.modal input,.modal textarea,.modal select{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;font-family:inherit;outline:none}
+.modal input:focus,.modal textarea:focus{border-color:var(--primary)}
+.modal textarea{height:80px;resize:vertical}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-actions .btn{padding:10px 24px;font-size:13px}
+.btn-save{background:linear-gradient(135deg,var(--primary),#2563eb);color:#fff}
+.btn-cancel{background:rgba(255,255,255,.05);color:var(--text);border:1px solid var(--border)}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer}
+
+.panel{display:none}.panel.active{display:block}
+
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="loginPage">
+  <div class="login-box">
+    <h1>🧠 AIHUB</h1>
+    <p>管理后台登录</p>
+    <input id="adminUser" type="text" placeholder="用户名" value="admin">
+    <input id="adminPass" type="password" placeholder="密码" value="admin123">
+    <button class="login-btn" onclick="adminLogin()">登 录</button>
+  </div>
+</div>
+
+<!-- Admin -->
+<div class="admin-wrap" id="adminPage" style="display:none">
+  <div class="sidebar">
+    <div class="sidebar-logo">🧠 AIHUB</div>
+    <a class="active" onclick="showPanel('dashboard')">📊 仪表盘</a>
+    <a onclick="showPanel('tools')">🛠️ AI工具管理</a>
+    <a onclick="showPanel('news')">📰 新闻管理</a>
+    <a onclick="showPanel('courses')">🎓 课程管理</a>
+    <a onclick="showPanel('posts')">👥 社区管理</a>
+    <a onclick="showPanel('jobs')">💼 求职管理</a>
+    <a onclick="showPanel('sideincome')">💰 副业管理</a>
+    <a onclick="showPanel('apps')">🏭 应用管理</a>
+    <a onclick="showPanel('users')">👤 用户管理</a>
+    <a onclick="showPanel('settings')">⚙️ 系统设置</a>
+    <a onclick="showPanel('banners')">🖼️ Banner管理</a>
+    <a href="/" style="margin-top:20px;border-top:1px solid var(--border);padding-top:20px">← 返回前台</a>
+    <a onclick="adminLogout()" style="color:var(--red)">🚪 退出登录</a>
+  </div>
+  <div class="main">
+    <!-- Dashboard -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="topbar"><h2>📊 仪表盘</h2></div>
+      <div class="stats" id="dashStats"></div>
+    </div>
+    <!-- Tools -->
+    <div class="panel" id="panel-tools">
+      <div class="topbar"><h2>🛠️ AI工具管理</h2><button class="btn-add" onclick="openModal('tools')">+ 添加工具</button></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>名称</th><th>分类</th><th>图标</th><th>描述</th><th>操作</th></tr></thead><tbody id="toolsBody"></tbody></table></div>
+    </div>
+    <!-- News -->
+    <div class="panel" id="panel-news">
+      <div class="topbar"><h2>📰 新闻管理</h2><button class="btn-add" onclick="openModal('news')">+ 添加新闻</button></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>标题</th><th>分类</th><th>头条</th><th>操作</th></tr></thead><tbody id="newsBody"></tbody></table></div>
+    </div>
+    <!-- Courses -->
+    <div class="panel" id="panel-courses">
+      <div class="topbar"><h2>🎓 课程管理</h2><button class="btn-add" onclick="openModal('courses')">+ 添加课程</button></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>标题</th><th>分类</th><th>难度</th><th>操作</th></tr></thead><tbody id="coursesBody"></tbody></table></div>
+    </div>
+    <!-- Posts -->
+    <div class="panel" id="panel-posts">
+      <div class="topbar"><h2>👥 社区管理</h2><button class="btn-add" onclick="openModal('posts')">+ 添加帖子</button></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>标题</th><th>作者</th><th>成员</th><th>操作</th></tr></thead><tbody id="postsBody"></tbody></table></div>
+    </div>
+    <!-- Jobs -->
+    <div class="panel" id="panel-jobs">
+      <div class="topbar"><h2>💼 求职管理</h2><button class="btn-add" onclick="openModal('jobs')">+ 添加职位</button></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>职位</th><th>公司</th><th>地点</th><th>薪资</th><th>操作</th></tr></thead><tbody id="jobsBody"></tbody></table></div>
+    </div>
+    <!-- Side Income -->
+    <div class="panel" id="panel-sideincome">
+      <div class="topbar"><h2>💰 副业管理</h2><button class="btn-add" onclick="openModal('sideincome')">+ 添加项目</button></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>项目</th><th>收入</th><th>等级</th><th>操作</th></tr></thead><tbody id="siBody"></tbody></table></div>
+    </div>
+    <!-- Apps -->
+    <div class="panel" id="panel-apps">
+      <div class="topbar"><h2>🏭 应用管理</h2><button class="btn-add" onclick="openModal('apps')">+ 添加应用</button></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>名称</th><th>分类</th><th>描述</th><th>操作</th></tr></thead><tbody id="appsBody"></tbody></table></div>
+    </div>
+    <!-- Users -->
+    <div class="panel" id="panel-users">
+      <div class="topbar"><h2>👤 用户管理</h2></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>手机号</th><th>昵称</th><th>注册时间</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+    </div>
+    <!-- Settings -->
+    <div class="panel" id="panel-settings">
+      <div class="topbar"><h2>⚙️ 系统设置</h2></div>
+      <div style="background:rgba(16,24,40,.4);border:1px solid var(--border);border-radius:14px;padding:24px">
+        <div id="settingsForm"></div>
+        <button class="btn-add" style="margin-top:20px" onclick="saveSettings()">💾 保存设置</button>
+      </div>
+    </div>
+    <!-- Banners -->
+    <div class="panel" id="panel-banners">
+      <div class="topbar"><h2>🖼️ Banner管理</h2><button class="btn-add" onclick="openModal('banners')">+ 添加Banner</button></div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>标题</th><th>副标题</th><th>排序</th><th>状态</th><th>操作</th></tr></thead><tbody id="bannersBody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle">编辑</h3>
+    <div id="modalFields"></div>
+    <div class="modal-actions">
+      <button class="btn btn-save" onclick="saveModal()">💾 保存</button>
+      <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='/api/admin';
+let currentPanel='',editType='',editId=null;
+
+async function adminLogin(){
+  const u=document.getElementById('adminUser').value,p=document.getElementById('adminPass').value;
+  const r=await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+  const d=await r.json();
+  if(d.success){document.getElementById('loginPage').style.display='none';document.getElementById('adminPage').style.display='flex';loadDashboard()}
+  else alert(d.error);
+}
+
+async function adminLogout(){
+  await fetch(API+'/logout',{method:'POST'});
+  document.getElementById('loginPage').style.display='flex';document.getElementById('adminPage').style.display='none';
+}
+
+async function checkAdmin(){
+  const r=await fetch(API+'/me'),d=await r.json();
+  if(d.admin){document.getElementById('loginPage').style.display='none';document.getElementById('adminPage').style.display='flex';loadDashboard()}
+}
+
+function showPanel(name){
+  currentPanel=name;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name)?.classList.add('active');
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  document.querySelectorAll('.sidebar a').forEach(a=>{if(a.textContent.includes(panelNames[name]))a.classList.add('active')});
+  loadPanel(name);
+}
+
+const panelNames={dashboard:'仪表盘',tools:'工具',news:'新闻',courses:'课程',posts:'社区',jobs:'求职',sideincome:'副业',apps:'应用',users:'用户',settings:'设置',banners:'Banner'};
+
+async function loadPanel(name){
+  const loaders={dashboard:loadDashboard,tools:loadTools,news:loadNews,courses:loadCourses,posts:loadPosts,jobs:loadJobs,sideincome:loadSI,apps:loadApps,users:loadUsers,settings:loadSettings,banners:loadBanners};
+  if(loaders[name])loaders[name]();
+}
+
+async function apiGet(path){const r=await fetch(API+'/'+path);return r.json()}
+async function apiPost(path,data){return fetch(API+'/'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(r=>r.json())}
+async function apiPut(path,id,data){return fetch(API+'/'+path+'/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(r=>r.json())}
+async function apiDel(path,id){return fetch(API+'/'+path+'/'+id,{method:'DELETE'}).then(r=>r.json())}
+
+async function loadDashboard(){
+  const s=await apiGet('stats');
+  document.getElementById('dashStats').innerHTML=[
+    ['👤 用户数',s.users,'var(--primary)'],['🛠️ 工具数',s.tools,'var(--accent)'],['📰 新闻数',s.news,'var(--gold)'],['🎓 课程数',s.courses,'var(--green)'],['👥 社区帖',s.posts,'var(--accent2)'],['💼 职位数',s.jobs,'var(--red)']
+  ].map(([l,n,c])=>'<div class="stat-card"><div class="num" style="color:'+c+'">'+n+'</div><div class="label">'+l+'</div></div>').join('');
+}
+
+function makeRow(data,fields,delPath,editFn){
+  return '<tr>'+fields.map(f=>'<td>'+(data[f]??'')+'</td>').join('')+
+  '<td><button class="btn btn-edit" onclick="'+editFn+'">编辑</button> <button class="btn btn-del" onclick="delItem(\''+delPath+'\','+data.id+')">删除</button></td></tr>';
+}
+
+async function delItem(path,id){
+  if(!confirm('确定删除？'))return;
+  await apiDel(path,id);loadPanel(currentPanel);
+}
+
+async function loadTools(){
+  const d=await apiGet('tools');
+  document.getElementById('toolsBody').innerHTML=d.tools.map(t=>makeRow(t,['id','name','category','icon','description'],'tools','openModal(\'tools\','+t.id+')')).join('');
+}
+
+async function loadNews(){
+  const d=await apiGet('news');
+  document.getElementById('newsBody').innerHTML=d.map(n=>'<tr><td>'+n.id+'</td><td>'+(n.title||'').slice(0,30)+'</td><td>'+n.category+'</td><td>'+(n.is_featured?'🔥':'')+'</td><td><button class="btn btn-edit" onclick="openModal(\'news\','+n.id+')">编辑</button> <button class="btn btn-del" onclick="delItem(\'news\','+n.id+')">删除</button></td></tr>').join('');
+}
+
+async function loadCourses(){
+  const d=await apiGet('courses');
+  document.getElementById('coursesBody').innerHTML=d.map(c=>makeRow(c,['id','title','category','difficulty'],'courses','openModal(\'courses\','+c.id+')')).join('');
+}
+
+async function loadPosts(){
+  const d=await apiGet('posts');
+  document.getElementById('postsBody').innerHTML=d.map(p=>makeRow(p,['id','title','author','members'],'posts','openModal(\'posts\','+p.id+')')).join('');
+}
+
+async function loadJobs(){
+  const d=await apiGet('jobs');
+  document.getElementById('jobsBody').innerHTML=d.map(j=>makeRow(j,['id','title','company','location','salary'],'jobs','openModal(\'jobs\','+j.id+')')).join('');
+}
+
+async function loadSI(){
+  const d=await apiGet('side-incomes');
+  document.getElementById('siBody').innerHTML=d.map(s=>'<tr><td>'+s.id+'</td><td>'+s.title+'</td><td>'+s.income+'</td><td>'+s.level+'</td><td><button class="btn btn-edit" onclick="openModal(\'sideincome\','+s.id+')">编辑</button> <button class="btn btn-del" onclick="delItem(\'side-incomes\','+s.id+')">删除</button></td></tr>').join('');
+}
+
+async function loadApps(){
+  const d=await apiGet('apps');
+  document.getElementById('appsBody').innerHTML=d.map(a=>'<tr><td>'+a.id+'</td><td>'+a.title+'</td><td>'+a.category+'</td><td>'+(a.description||'').slice(0,30)+'</td><td><button class="btn btn-edit" onclick="openModal(\'apps\','+a.id+')">编辑</button> <button class="btn btn-del" onclick="delItem(\'apps\','+a.id+')">删除</button></td></tr>').join('');
+}
+
+async function loadUsers(){
+  const d=await apiGet('users');
+  document.getElementById('usersBody').innerHTML=d.map(u=>'<tr><td>'+u.id+'</td><td>'+u.phone+'</td><td>'+(u.nickname||'-')+'</td><td>'+u.created_at+'</td></tr>').join('');
+}
+
+async function loadSettings(){
+  const d=await apiGet('settings');
+  const labels={site_title:'网站标题',site_subtitle:'网站副标题',site_description:'网站描述',stat_tools:'工具数',stat_courses:'课程数',stat_users:'用户数(万)',stat_users_unit:'用户单位',ticker_1:'快讯1',ticker_2:'快讯2',ticker_3:'快讯3',ticker_4:'快讯4',ticker_5:'快讯5',ticker_6:'快讯6'};
+  document.getElementById('settingsForm').innerHTML=d.map(s=>'<div style="margin-bottom:12px"><label style="display:block;font-size:13px;color:var(--text2);margin-bottom:4px">'+(labels[s.key]||s.key)+'</label><input id="set_'+s.key+'" value="'+(s.value||'')+'"></div>').join('');
+}
+
+async function saveSettings(){
+  const inputs=document.querySelectorAll('[id^="set_"]');
+  const settings={};
+  inputs.forEach(i=>{settings[i.id.replace('set_','')]=i.value});
+  await apiPut('settings','',{settings});
+  alert('保存成功！');
+}
+
+async function loadBanners(){
+  const d=await apiGet('banners');
+  document.getElementById('bannersBody').innerHTML=d.map(b=>'<tr><td>'+b.id+'</td><td>'+b.title+'</td><td>'+(b.subtitle||'')+'</td><td>'+b.sort_order+'</td><td>'+(b.active?'✅':'❌')+'</td><td><button class="btn btn-edit" onclick="openModal(\'banners\','+b.id+')">编辑</button> <button class="btn btn-del" onclick="delItem(\'banners\','+b.id+')">删除</button></td></tr>').join('');
+}
+
+// Modal
+const fieldConfigs={
+  tools:[{k:'name',l:'名称',t:'text'},{k:'category',l:'分类',t:'select',opts:['chat','image','video','audio','code','office','search','human']},{k:'icon',l:'图标(emoji)',t:'text'},{k:'url',l:'链接',t:'text'},{k:'description',l:'描述',t:'text'}],
+  news:[{k:'title',l:'标题',t:'text'},{k:'content',l:'内容',t:'textarea'},{k:'category',l:'分类',t:'text'},{k:'tags',l:'标签',t:'text'},{k:'cover',l:'封面URL',t:'text'},{k:'is_featured',l:'头条(1/0)',t:'text'}],
+  courses:[{k:'title',l:'标题',t:'text'},{k:'description',l:'描述',t:'textarea'},{k:'category',l:'分类',t:'text'},{k:'difficulty',l:'难度',t:'select',opts:['入门','进阶','高级']},{k:'icon',l:'图标',t:'text'},{k:'students',l:'学员数',t:'text'},{k:'rating',l:'评分',t:'text'}],
+  posts:[{k:'title',l:'标题',t:'text'},{k:'content',l:'内容',t:'textarea'},{k:'author',l:'作者',t:'text'},{k:'author_avatar',l:'作者头像(emoji)',t:'text'},{k:'members',l:'成员数',t:'text'}],
+  jobs:[{k:'title',l:'职位',t:'text'},{k:'company',l:'公司',t:'text'},{k:'location',l:'地点',t:'text'},{k:'salary',l:'薪资',t:'text'},{k:'icon',l:'图标',t:'text'},{k:'tag',l:'标签',t:'text'},{k:'tag_color',l:'标签颜色',t:'select',opts:['red','gold','green']}],
+  sideincome:[{k:'title',l:'项目名',t:'text'},{k:'description',l:'描述',t:'textarea'},{k:'income',l:'收入范围',t:'text'},{k:'icon',l:'图标',t:'text'},{k:'tags',l:'标签(逗号分隔)',t:'text'},{k:'level',l:'等级',t:'select',opts:['入门','进阶','高级']}],
+  apps:[{k:'title',l:'名称',t:'text'},{k:'description',l:'描述',t:'textarea'},{k:'category',l:'分类',t:'text'},{k:'icon',l:'图标',t:'text'},{k:'tags',l:'标签(逗号分隔)',t:'text'}],
+  banners:[{k:'title',l:'标题',t:'text'},{k:'subtitle',l:'副标题',t:'text'},{k:'link',l:'链接',t:'text'},{k:'sort_order',l:'排序',t:'text'},{k:'active',l:'启用(1/0)',t:'text'}]
+};
+
+const apiPaths={tools:'tools',news:'news',courses:'courses',posts:'posts',jobs:'jobs',sideincome:'side-incomes',apps:'apps',banners:'banners'};
+
+async function openModal(type,id){
+  editType=type;editId=id||null;
+  document.getElementById('modalTitle').textContent=(id?'编辑':'添加')+' '+({tools:'工具',news:'新闻',courses:'课程',posts:'帖子',jobs:'职位',sideincome:'副业项目',apps:'应用',banners:'Banner'}[type]||'');
+  const fields=fieldConfigs[type]||[];
+  let data={};
+  if(id){
+    const path=apiPaths[type];
+    if(type==='sideincome'){const d=await apiGet('side-incomes');data=d.find(x=>x.id===id)||{}}
+    else if(type==='banners'){const d=await apiGet('banners');data=d.find(x=>x.id===id)||{}}
+    else{const d=await apiGet(path);data=Array.isArray(d)?d.find(x=>x.id===id)||{}:(d.tools||d).find(x=>x.id===id)||{}}
+  }
+  document.getElementById('modalFields').innerHTML=fields.map(f=>{
+    const val=data[f.k]||'';
+    if(f.t==='select')return'<label>'+f.l+'</label><select id="mf_'+f.k+'">'+f.opts.map(o=>'<option'+(val===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
+    if(f.t==='textarea')return'<label>'+f.l+'</label><textarea id="mf_'+f.k+'">'+val+'</textarea>';
+    return'<label>'+f.l+'</label><input id="mf_'+f.k+'" value="'+val+'">';
+  }).join('');
+  document.getElementById('editModal').classList.add('show');
+}
+
+function closeModal(){document.getElementById('editModal').classList.remove('show')}
+
+async function saveModal(){
+  const fields=fieldConfigs[editType]||[];
+  const data={};
+  fields.forEach(f=>{const el=document.getElementById('mf_'+f.k);data[f.k]=el?el.value:''});
+  const path=apiPaths[editType];
+  try{
+    if(editId){await apiPut(path,editId,data)}
+    else{await apiPost(path,data)}
+    closeModal();loadPanel(currentPanel);
+  }catch(e){alert('保存失败：'+e.message)}
+}
+
+checkAdmin();
+</script>
+</body>
+</html>
